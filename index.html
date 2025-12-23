@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WhatsApp Order - Jo Crispy</title>
+<title>WhatsApp Order - Go Crispy</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 /* GLOBAL IMPROVEMENTS */
@@ -993,16 +993,17 @@ body {
     <!-- WhatsApp Header -->
     <div class="whatsapp-header">
       <div class="back-btn" onclick="goBack()">
-        <i class="fas fa-chevron-left"></i>
+        <i class="fas fa-chevron-right"></i>
       </div>
       
       <div class="restaurant-info">
         <div class="restaurant-avatar">
-          <img src="images/profile.png" alt="Jo Crispy" onerror="this.src='images/profile.png'">
+          <img src="images/profile.png" alt="Go Crispy" onerror="this.src='images/profile.png'">
         </div>
         <div class="restaurant-details">
-          <h2>Jo Crispy</h2>
-          <p>Online Now</p>
+          <h2>Go Crispy</h2>
+          <!-- CHANGED: Removed "التوصيل السريع" -->
+          <p>Online now</p>
         </div>
       </div>
       
@@ -1035,15 +1036,15 @@ body {
 <script>
 // Restaurant data
 const restaurant = {
-  name: "Jo Crispy",
-  description: "Delicious crispy meals and fast food with high quality",
+  name: "Go Crispy",
+  description: "The most delicious crispy meals and fast food with high quality",
   logo: "images/profile.png",
-  address: "Al Olaya, King Fahd Road, Riyadh",
+  address: "Al Olaya District, King Fahd Road, Riyadh",
   phone: "011 234 5678",
   rating: "4.8 ★ (950 ratings)"
 };
 
-// Menu items with English names and local images
+// Menu items with your English names and local images
 const menuItems = [
   {
     id: 1,
@@ -1054,29 +1055,29 @@ const menuItems = [
   },
   {
     id: 2,
-    name: "Jo Chicken Meal",
-    description: "Crispy Jo chicken meal",
+    name: "Go Chicken Meal",
+    description: "Crispy Go Chicken meal",
     price: 65,
     image: "images/item2.png"
   },
   {
     id: 3,
-    name: "Bunawi Meal",
-    description: "Delicious Bunawi meal with various items",
+    name: "Benawi Meal",
+    description: "Delicious Benawi meal with various items",
     price: 75,
     image: "images/item3.png"
   },
   {
     id: 4,
     name: "Celebration Meal",
-    description: "Large celebration meal with all items",
+    description: "Large celebration meal for 2-3 people with all items",
     price: 120,
     image: "images/item4.png"
   },
   {
     id: 5,
-    name: "Jo Double Royal Meal",
-    description: "Double and luxurious Jo royal meal",
+    name: "Go Double Royal Meal",
+    description: "Double and luxurious Go Royal meal",
     price: 110,
     image: "images/item5.png"
   },
@@ -1104,14 +1105,14 @@ const menuItems = [
   {
     id: 9,
     name: "Happiness Meal",
-    description: "Happiness meal with special items",
+    description: "Meal that brings happiness with special items",
     price: 70,
     image: "images/item9.png"
   },
   {
     id: 10,
-    name: "Tender with Gravy Packet",
-    description: "Chicken tender packet with special gravy sauce",
+    name: "Tender Pack with Gravy",
+    description: "Chicken tender pack with special gravy sauce",
     price: 80,
     image: "images/item10.png"
   }
@@ -1186,7 +1187,7 @@ function processDigitalMenuOrder(cartData) {
             <div class="cart-total-amount">${cartData.total} SAR</div>
           </div>
           <button class="checkout-btn" onclick="showDeliveryOptions()">
-            <i class="fas fa-lock"></i> Confirm Order & Payment
+            <i class="fas fa-lock"></i> Confirm Order & Pay
           </button>
         </div>
       `;
@@ -1195,7 +1196,7 @@ function processDigitalMenuOrder(cartData) {
       addBotMessage(orderSummaryHTML, getCurrentTime());
       
       // Show confirmation message
-      addBotMessage(`✅ Received your order from digital menu. Order total: ${cartData.total} SAR`, getCurrentTime());
+      addBotMessage(`✅ Your order from digital menu has been received. Order total: ${cartData.total} SAR`, getCurrentTime());
     }
   });
   
@@ -1261,19 +1262,19 @@ function showPaymentSuccessConfirmation(orderId, source) {
           <i class="fas fa-check"></i>
         </div>
         <div>
-          <h3>Your Order Confirmed! 🎉</h3>
+          <h3>Your order is confirmed! 🎉</h3>
         </div>
       </div>
       <div class="confirmation-details">
         <p><strong>Order Number:</strong> #${orderId}</p>
         <p><strong>Payment Method:</strong> ${paymentMethodText}</p>
-        <p><strong>Delivery Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to Address' : 'Pickup from Restaurant'}</p>
+        <p><strong>Delivery Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to address' : 'Pickup from restaurant'}</p>
         ${deliveryType === 'delivery' ? `<p><strong>Address:</strong> ${userAddress}</p>` : ''}
         <p><strong>Estimated Time:</strong> ${deliveryType === 'delivery' ? '45 minutes' : '25 minutes'}</p>
         <div style="margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 10px;">
           <p style="color: #303030; margin-bottom: 10px; font-weight: 600;">Order Details:</p>
           ${itemsList}
-          ${deliveryType === 'delivery' ? `<p>• Delivery Fee - 16 SAR</p>` : ''}
+          ${deliveryType === 'delivery' ? `<p>• Delivery fee - 16 SAR</p>` : ''}
           <p style="margin-top: 10px; color: #00a884; font-weight: 700;">Total: ${total} SAR</p>
         </div>
         <p><strong>📞 For inquiries:</strong> ${restaurant.phone}</p>
@@ -1285,7 +1286,7 @@ function showPaymentSuccessConfirmation(orderId, source) {
       </div>
     </div>
     <div style="text-align: center; color: #666666; font-size: 14px; padding: 20px;">
-      Thank you for choosing Jo Crispy. Enjoy your meal! 🍽️✨
+      Thank you for choosing Go Crispy. We wish you a delicious meal! 🍽️✨
     </div>
   `;
   
@@ -1350,8 +1351,8 @@ function initChat() {
   }
   
   // Only show welcome messages if not returning from payment or digital menu
-  addBotMessage("Welcome to Jo Crispy! 🍗✨", "10:30");
-  addBotMessage("We offer the most delicious crispy meals and fast food with high quality. How can I serve you today?", "10:30");
+  addBotMessage("Welcome to Go Crispy! 🍗✨", "10:30");
+  addBotMessage("We offer you the most delicious crispy meals and fast food with high quality. How can I serve you today?", "10:30");
   
   // Add quick order button
   setTimeout(() => {
@@ -1457,11 +1458,11 @@ function sendMessage() {
 
 // Process user message
 function processUserMessage(text) {
-  if (currentStep === 'welcome' && (text.includes('order') || text.includes('want') || text.includes('I want') || text.includes('need'))) {
+  if (currentStep === 'welcome' && (text.includes('order') || text.includes('want') || text.includes('need') || text.includes('place'))) {
     showCatalog();
   } else if (currentStep === 'menu' && text.includes('show')) {
     showMenu();
-  } else if (text.includes('help') || text.includes('assistance')) {
+  } else if (text.includes('help') || text.includes('support')) {
     addBotMessage("I can help you with: 📝 Show menu 🛒 Add products to order 🚚 Choose delivery method 💳 Electronic payment. What would you like to do?");
   } else {
     addBotMessage("To start a new order, please type 'I want to order' or click the 'I want to order' button.");
@@ -1589,7 +1590,7 @@ function updateCartDisplay() {
           <div class="cart-total-amount">${total} SAR</div>
         </div>
         <button class="checkout-btn" onclick="showDeliveryOptions()">
-          <i class="fas fa-lock"></i> Confirm Order & Payment
+          <i class="fas fa-lock"></i> Confirm Order & Pay
         </button>
       </div>
     `;
@@ -1628,7 +1629,7 @@ function showDeliveryOptions() {
         </div>
         <div class="delivery-details">
           <h4>Pickup from Restaurant</h4>
-          <p>You can pick up the order from our branch in Al Olaya with premium reception service</p>
+          <p>You can pick up your order from our branch in Al Olaya with premium reception service</p>
           <p style="color: #00a884; margin-top: 5px;">No additional fees</p>
         </div>
       </div>
@@ -1692,7 +1693,7 @@ function showLocationSharing() {
       </div>
       <div class="location-message">
         <p style="color: #303030; margin-bottom: 20px; font-size: 14px;">
-          To proceed with delivery order, we need your location
+          To proceed with delivery order, we need to share your location
         </p>
         <button class="location-btn" onclick="shareLocation()">
           <i class="fas fa-location-arrow"></i> Share Current Location
@@ -1719,7 +1720,7 @@ function showLocationSharing() {
 // Share current location
 function shareLocation() {
   userAddress = "Current Location (Shared)";
-  addBotMessage("📍 Location shared successfully!", getCurrentTime());
+  addBotMessage("📍 Your location has been shared successfully!", getCurrentTime());
   setTimeout(() => {
     showPaymentOptions();
   }, 1000);
@@ -1733,7 +1734,7 @@ function handleManualAddress() {
 // Use saved address
 function useSavedAddress() {
   userAddress = "Saved Home Address";
-  addBotMessage(`✅ Selected saved address: ${userAddress}`, getCurrentTime());
+  addBotMessage(`✅ Saved address selected: ${userAddress}`, getCurrentTime());
   setTimeout(() => {
     showPaymentOptions();
   }, 1000);
@@ -1861,19 +1862,19 @@ function completePayment() {
           <i class="fas fa-check"></i>
         </div>
         <div>
-          <h3>Your Order Confirmed! 🎉</h3>
+          <h3>Your order is confirmed! 🎉</h3>
         </div>
       </div>
       <div class="confirmation-details">
         <p><strong>Order Number:</strong> #${orderId}</p>
         <p><strong>Payment Method:</strong> Apple Pay</p>
-        <p><strong>Delivery Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to Address' : 'Pickup from Restaurant'}</p>
+        <p><strong>Delivery Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to address' : 'Pickup from restaurant'}</p>
         ${deliveryType === 'delivery' ? `<p><strong>Address:</strong> ${userAddress}</p>` : ''}
         <p><strong>Estimated Time:</strong> ${deliveryType === 'delivery' ? '45 minutes' : '25 minutes'}</p>
         <div style="margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 10px;">
           <p style="color: #303030; margin-bottom: 10px; font-weight: 600;">Order Details:</p>
           ${itemsList}
-          ${deliveryType === 'delivery' ? `<p>• Delivery Fee - 16 SAR</p>` : ''}
+          ${deliveryType === 'delivery' ? `<p>• Delivery fee - 16 SAR</p>` : ''}
           <p style="margin-top: 10px; color: #00a884; font-weight: 700;">Total: ${total} SAR</p>
         </div>
         <p><strong>📞 For inquiries:</strong> ${restaurant.phone}</p>
@@ -1885,7 +1886,7 @@ function completePayment() {
       </div>
     </div>
     <div style="text-align: center; color: #666666; font-size: 14px; padding: 15px;">
-      Thank you for choosing Jo Crispy. Enjoy your meal! 🍽️✨
+      Thank you for choosing Go Crispy. We wish you a delicious meal! 🍽️✨
     </div>
   `;
   

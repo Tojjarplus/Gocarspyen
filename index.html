@@ -1002,7 +1002,6 @@ body {
         </div>
         <div class="restaurant-details">
           <h2>Go Crispy</h2>
-          <!-- CHANGED: Removed "التوصيل السريع" -->
           <p>Online now</p>
         </div>
       </div>
@@ -1024,7 +1023,7 @@ body {
     <!-- Input Area -->
     <div class="input-area">
       <i class="fas fa-paperclip" style="color: #666666; font-size: 20px;"></i>
-      <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendMessage()">
+      <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendMessage()" value="I want to order">
       <button class="send-btn" onclick="sendMessage()">
         <i class="fas fa-paper-plane"></i>
       </button>
@@ -1922,11 +1921,6 @@ function completePayment() {
 // Initialize on load
 window.onload = function() {
   initChat();
-  
-  // Add welcome message after a delay
-  setTimeout(() => {
-    document.getElementById('messageInput').value = "I want to order";
-  }, 1000);
 };
 </script>
 </body>

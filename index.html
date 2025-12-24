@@ -1023,7 +1023,7 @@ body {
     <!-- Input Area -->
     <div class="input-area">
       <i class="fas fa-paperclip" style="color: #666666; font-size: 20px;"></i>
-      <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendMessage()" value="I want to order">
+      <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendMessage()">
       <button class="send-btn" onclick="sendMessage()">
         <i class="fas fa-paper-plane"></i>
       </button>
@@ -1148,7 +1148,7 @@ function checkForDigitalMenuOrder() {
   return false;
 }
 
-// NEW: Process digital menu order - SIMPLIFIED VERSION
+// NEW: Process digital menu order - FIXED VERSION (REPLACED THIS FUNCTION)
 function processDigitalMenuOrder(cartData) {
   // Clear existing cart
   cart = [];
@@ -1156,6 +1156,8 @@ function processDigitalMenuOrder(cartData) {
   
   // Add items from digital menu to cart
   let itemsTotal = 0;
+  let itemsHTML = '';
+  let totalItemsCount = 0;
   
   cartData.items.forEach(itemData => {
     // Find the corresponding menu item
@@ -1167,10 +1169,60 @@ function processDigitalMenuOrder(cartData) {
       
       const itemTotal = menuItem.price * itemData.quantity;
       itemsTotal += itemTotal;
+      totalItemsCount += itemData.quantity;
+      
+      // Add main item to summary
+      itemsHTML += `
+        <div class="cart-item">
+          <div class="cart-item-name">${menuItem.name} × ${itemData.quantity}</div>
+          <div class="cart-item-price">${itemTotal} SAR</div>
+        </div>
+      `;
+      
+      // Add addons if any
+      if (itemData.addons && itemData.addons.length > 0) {
+        itemData.addons.forEach(addon => {
+          const addonTotal = addon.price * addon.quantity;
+          itemsTotal += addonTotal;
+          itemsHTML += `
+            <div class="cart-item">
+              <div class="cart-item-name" style="font-size: 12px; padding-left: 15px;">+ ${addon.name} × ${addon.quantity}</div>
+              <div class="cart-item-price" style="font-size: 12px;">${addonTotal} SAR</div>
+            </div>
+          `;
+        });
+      }
+      
+      // Add modifier if any (from new digital menu)
+      if (itemData.modifier) {
+        itemsHTML += `
+          <div class="cart-item">
+            <div class="cart-item-name" style="font-size: 12px; padding-left: 15px; color: #666;">↳ ${itemData.modifier.name}</div>
+            <div class="cart-item-price" style="font-size: 12px; color: #666;">Included</div>
+          </div>
+        `;
+      }
     }
   });
   
-  // Show simple confirmation message
+  // Show ONE combined order summary
+  const orderSummaryHTML = `
+    <div class="cart-summary">
+      <h3><i class="fas fa-shopping-bag"></i> Your Order from Digital Menu</h3>
+      <div class="cart-items">
+        ${itemsHTML}
+      </div>
+      <div class="cart-total">
+        <div class="cart-total-label">Total</div>
+        <div class="cart-total-amount">${itemsTotal} SAR</div>
+      </div>
+    </div>
+  `;
+  
+  // Add order summary message (ONE message only)
+  addBotMessage(orderSummaryHTML, getCurrentTime());
+  
+  // Show confirmation message
   addBotMessage(`✅ Received your order from Digital Menu. Order total: ${itemsTotal} SAR`, getCurrentTime());
   
   // Set current step to ordering
@@ -1179,7 +1231,7 @@ function processDigitalMenuOrder(cartData) {
   // Auto-scroll to bottom
   scrollToBottom();
   
-  // AUTO SHOW DELIVERY OPTIONS after 1 second
+  // AUTO SHOW DELIVERY OPTIONS after 1 second (NO CONFIRMATION BUTTON NEEDED)
   setTimeout(() => {
     showDeliveryOptions();
   }, 1000);
@@ -1436,7 +1488,7 @@ function sendMessage() {
 
 // Process user message
 function processUserMessage(text) {
-  if (currentStep === 'welcome' && (text.includes('order') || text.includes('أريد') || text.includes('ابغى') || text.includes('ابغي') || text.includes('I want') || text.includes('new order'))) {
+  if (currentStep === 'welcome' && (text.includes('order') || text.includes('I want') || text.includes('new order'))) {
     showCatalog();
   } else if (currentStep === 'menu' && text.includes('menu') || text.includes('view')) {
     showMenu();

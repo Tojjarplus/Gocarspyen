@@ -1002,6 +1002,7 @@ body {
         </div>
         <div class="restaurant-details">
           <h2>Go Crispy</h2>
+          <!-- CHANGED: Removed "التوصيل السريع" -->
           <p>Online now</p>
         </div>
       </div>
@@ -1023,7 +1024,7 @@ body {
     <!-- Input Area -->
     <div class="input-area">
       <i class="fas fa-paperclip" style="color: #666666; font-size: 20px;"></i>
-      <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendMessage()">
+      <input type="text" id="messageInput" placeholder="Type a message..." onkeydown="if(event.key === 'Enter') sendMessage()" value="I want to order">
       <button class="send-btn" onclick="sendMessage()">
         <i class="fas fa-paper-plane"></i>
       </button>
@@ -1148,7 +1149,7 @@ function checkForDigitalMenuOrder() {
   return false;
 }
 
-// NEW: Process digital menu order - FIXED VERSION (REPLACED THIS FUNCTION)
+// NEW: Process digital menu order - FIXED VERSION (FROM ARABIC ORIGINAL - WORKING)
 function processDigitalMenuOrder(cartData) {
   // Clear existing cart
   cart = [];
@@ -1477,7 +1478,7 @@ function sendMessage() {
   
   if (text) {
     addUserMessage(text);
-    input.value = '';
+    input.value = 'I want to order'; // Reset to default message
     
     // Process based on current step
     setTimeout(() => {
@@ -1492,7 +1493,7 @@ function processUserMessage(text) {
     showCatalog();
   } else if (currentStep === 'menu' && text.includes('menu') || text.includes('view')) {
     showMenu();
-  } else if (text.includes('help') || text.includes('مساعدة')) {
+  } else if (text.includes('help')) {
     addBotMessage("I can help you with: 📝 View Menu 🛒 Add products to order 🚚 Choose delivery method 💳 Electronic payment. What would you like to do?");
   } else {
     addBotMessage("To start a new order, please type 'I want to order' or click the 'I want to order' button.");

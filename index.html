@@ -1148,7 +1148,7 @@ function checkForDigitalMenuOrder() {
   return false;
 }
 
-// NEW: Process digital menu order - FIXED VERSION
+// NEW: Process digital menu order - SIMPLIFIED VERSION
 function processDigitalMenuOrder(cartData) {
   // Clear existing cart
   cart = [];
@@ -1156,8 +1156,6 @@ function processDigitalMenuOrder(cartData) {
   
   // Add items from digital menu to cart
   let itemsTotal = 0;
-  let itemsHTML = '';
-  let totalItemsCount = 0;
   
   cartData.items.forEach(itemData => {
     // Find the corresponding menu item
@@ -1169,60 +1167,10 @@ function processDigitalMenuOrder(cartData) {
       
       const itemTotal = menuItem.price * itemData.quantity;
       itemsTotal += itemTotal;
-      totalItemsCount += itemData.quantity;
-      
-      // Add main item to summary
-      itemsHTML += `
-        <div class="cart-item">
-          <div class="cart-item-name">${menuItem.name} × ${itemData.quantity}</div>
-          <div class="cart-item-price">${itemTotal} SAR</div>
-        </div>
-      `;
-      
-      // Add addons if any
-      if (itemData.addons && itemData.addons.length > 0) {
-        itemData.addons.forEach(addon => {
-          const addonTotal = addon.price * addon.quantity;
-          itemsTotal += addonTotal;
-          itemsHTML += `
-            <div class="cart-item">
-              <div class="cart-item-name" style="font-size: 12px; padding-left: 15px;">+ ${addon.name} × ${addon.quantity}</div>
-              <div class="cart-item-price" style="font-size: 12px;">${addonTotal} SAR</div>
-            </div>
-          `;
-        });
-      }
-      
-      // Add modifier if any (from new digital menu)
-      if (itemData.modifier) {
-        itemsHTML += `
-          <div class="cart-item">
-            <div class="cart-item-name" style="font-size: 12px; padding-left: 15px; color: #666;">↳ ${itemData.modifier.name}</div>
-            <div class="cart-item-price" style="font-size: 12px; color: #666;">Included</div>
-          </div>
-        `;
-      }
     }
   });
   
-  // Show ONE combined order summary
-  const orderSummaryHTML = `
-    <div class="cart-summary">
-      <h3><i class="fas fa-shopping-bag"></i> Your order from Digital Menu</h3>
-      <div class="cart-items">
-        ${itemsHTML}
-      </div>
-      <div class="cart-total">
-        <div class="cart-total-label">Total</div>
-        <div class="cart-total-amount">${itemsTotal} SAR</div>
-      </div>
-    </div>
-  `;
-  
-  // Add order summary message (ONE message only)
-  addBotMessage(orderSummaryHTML, getCurrentTime());
-  
-  // Show confirmation message
+  // Show simple confirmation message
   addBotMessage(`✅ Received your order from Digital Menu. Order total: ${itemsTotal} SAR`, getCurrentTime());
   
   // Set current step to ordering
@@ -1231,7 +1179,7 @@ function processDigitalMenuOrder(cartData) {
   // Auto-scroll to bottom
   scrollToBottom();
   
-  // AUTO SHOW DELIVERY OPTIONS after 1 second (NO CONFIRMATION BUTTON NEEDED)
+  // AUTO SHOW DELIVERY OPTIONS after 1 second
   setTimeout(() => {
     showDeliveryOptions();
   }, 1000);

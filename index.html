@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1037,14 +1037,14 @@ body {
 // Restaurant data
 const restaurant = {
   name: "Go Crispy",
-  description: "The most delicious crispy meals and fast food with high quality",
+  description: "Delicious crispy meals and fast food with high quality",
   logo: "images/profile.png",
   address: "Al Olaya District, King Fahd Road, Riyadh",
   phone: "011 234 5678",
-  rating: "4.8 ★ (950 ratings)"
+  rating: "4.8 ★ (950 reviews)"
 };
 
-// Menu items with your English names and local images
+// Menu items with your Arabic names and local images
 const menuItems = [
   {
     id: 1,
@@ -1056,28 +1056,28 @@ const menuItems = [
   {
     id: 2,
     name: "Go Chicken Meal",
-    description: "Crispy Go Chicken meal",
+    description: "Crispy Go chicken meal",
     price: 65,
     image: "images/item2.png"
   },
   {
     id: 3,
-    name: "Benawi Meal",
-    description: "Delicious Benawi meal with various items",
+    name: "Binawi Meal",
+    description: "Delicious Binawi meal with various items",
     price: 75,
     image: "images/item3.png"
   },
   {
     id: 4,
     name: "Celebration Meal",
-    description: "Large celebration meal for 2-3 people with all items",
+    description: "Large celebration meal with all items",
     price: 120,
     image: "images/item4.png"
   },
   {
     id: 5,
     name: "Go Double Royal Meal",
-    description: "Double and luxurious Go Royal meal",
+    description: "Double and luxurious Go royal meal",
     price: 110,
     image: "images/item5.png"
   },
@@ -1111,8 +1111,8 @@ const menuItems = [
   },
   {
     id: 10,
-    name: "Tender Pack with Gravy",
-    description: "Chicken tender pack with special gravy sauce",
+    name: "Tender with Gravy Packet",
+    description: "Chicken tender packet with special gravy sauce",
     price: 80,
     image: "images/item10.png"
   }
@@ -1149,13 +1149,17 @@ function checkForDigitalMenuOrder() {
   return false;
 }
 
-// NEW: Process digital menu order
+// NEW: Process digital menu order - FIXED VERSION
 function processDigitalMenuOrder(cartData) {
   // Clear existing cart
   cart = [];
   selectedItems = {};
   
   // Add items from digital menu to cart
+  let itemsTotal = 0;
+  let itemsHTML = '';
+  let totalItemsCount = 0;
+  
   cartData.items.forEach(itemData => {
     // Find the corresponding menu item
     const menuItem = menuItems.find(item => item.id === itemData.itemId);
@@ -1164,47 +1168,74 @@ function processDigitalMenuOrder(cartData) {
       selectedItems[menuItem.id] = true;
       cart.push(menuItem.id);
       
-      // Show order summary
-      const orderSummaryHTML = `
-        <div class="cart-summary">
-          <h3><i class="fas fa-shopping-bag"></i> Your Order from Digital Menu</h3>
-          <div class="cart-items">
-            <div class="cart-item">
-              <div class="cart-item-name">${menuItem.name} × ${itemData.quantity}</div>
-              <div class="cart-item-price">${menuItem.price * itemData.quantity} SAR</div>
-            </div>
-            ${itemData.addons && itemData.addons.length > 0 ? 
-              itemData.addons.map(addon => `
-                <div class="cart-item">
-                  <div class="cart-item-name" style="font-size: 12px; padding-left: 15px;">+ ${addon.name} × ${addon.quantity}</div>
-                  <div class="cart-item-price" style="font-size: 12px;">${addon.price * addon.quantity} SAR</div>
-                </div>
-              `).join('') : ''
-            }
-          </div>
-          <div class="cart-total">
-            <div class="cart-total-label">Total</div>
-            <div class="cart-total-amount">${cartData.total} SAR</div>
-          </div>
-          <button class="checkout-btn" onclick="showDeliveryOptions()">
-            <i class="fas fa-lock"></i> Confirm Order & Pay
-          </button>
+      const itemTotal = menuItem.price * itemData.quantity;
+      itemsTotal += itemTotal;
+      totalItemsCount += itemData.quantity;
+      
+      // Add main item to summary
+      itemsHTML += `
+        <div class="cart-item">
+          <div class="cart-item-name">${menuItem.name} × ${itemData.quantity}</div>
+          <div class="cart-item-price">${itemTotal} SAR</div>
         </div>
       `;
       
-      // Add order summary message
-      addBotMessage(orderSummaryHTML, getCurrentTime());
+      // Add addons if any
+      if (itemData.addons && itemData.addons.length > 0) {
+        itemData.addons.forEach(addon => {
+          const addonTotal = addon.price * addon.quantity;
+          itemsTotal += addonTotal;
+          itemsHTML += `
+            <div class="cart-item">
+              <div class="cart-item-name" style="font-size: 12px; padding-left: 15px;">+ ${addon.name} × ${addon.quantity}</div>
+              <div class="cart-item-price" style="font-size: 12px;">${addonTotal} SAR</div>
+            </div>
+          `;
+        });
+      }
       
-      // Show confirmation message
-      addBotMessage(`✅ Your order from digital menu has been received. Order total: ${cartData.total} SAR`, getCurrentTime());
+      // Add modifier if any (from new digital menu)
+      if (itemData.modifier) {
+        itemsHTML += `
+          <div class="cart-item">
+            <div class="cart-item-name" style="font-size: 12px; padding-left: 15px; color: #666;">↳ ${itemData.modifier.name}</div>
+            <div class="cart-item-price" style="font-size: 12px; color: #666;">Included</div>
+          </div>
+        `;
+      }
     }
   });
+  
+  // Show ONE combined order summary
+  const orderSummaryHTML = `
+    <div class="cart-summary">
+      <h3><i class="fas fa-shopping-bag"></i> Your order from Digital Menu</h3>
+      <div class="cart-items">
+        ${itemsHTML}
+      </div>
+      <div class="cart-total">
+        <div class="cart-total-label">Total</div>
+        <div class="cart-total-amount">${itemsTotal} SAR</div>
+      </div>
+    </div>
+  `;
+  
+  // Add order summary message (ONE message only)
+  addBotMessage(orderSummaryHTML, getCurrentTime());
+  
+  // Show confirmation message
+  addBotMessage(`✅ Received your order from Digital Menu. Order total: ${itemsTotal} SAR`, getCurrentTime());
   
   // Set current step to ordering
   currentStep = 'ordering';
   
   // Auto-scroll to bottom
   scrollToBottom();
+  
+  // AUTO SHOW DELIVERY OPTIONS after 1 second (NO CONFIRMATION BUTTON NEEDED)
+  setTimeout(() => {
+    showDeliveryOptions();
+  }, 1000);
   
   // Return true to indicate order was processed
   return true;
@@ -1262,19 +1293,19 @@ function showPaymentSuccessConfirmation(orderId, source) {
           <i class="fas fa-check"></i>
         </div>
         <div>
-          <h3>Your order is confirmed! 🎉</h3>
+          <h3>Your order confirmed! 🎉</h3>
         </div>
       </div>
       <div class="confirmation-details">
         <p><strong>Order Number:</strong> #${orderId}</p>
         <p><strong>Payment Method:</strong> ${paymentMethodText}</p>
-        <p><strong>Delivery Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to address' : 'Pickup from restaurant'}</p>
+        <p><strong>Receiving Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to address' : 'Pickup from restaurant'}</p>
         ${deliveryType === 'delivery' ? `<p><strong>Address:</strong> ${userAddress}</p>` : ''}
         <p><strong>Estimated Time:</strong> ${deliveryType === 'delivery' ? '45 minutes' : '25 minutes'}</p>
         <div style="margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 10px;">
           <p style="color: #303030; margin-bottom: 10px; font-weight: 600;">Order Details:</p>
           ${itemsList}
-          ${deliveryType === 'delivery' ? `<p>• Delivery fee - 16 SAR</p>` : ''}
+          ${deliveryType === 'delivery' ? `<p>• Delivery Fee - 16 SAR</p>` : ''}
           <p style="margin-top: 10px; color: #00a884; font-weight: 700;">Total: ${total} SAR</p>
         </div>
         <p><strong>📞 For inquiries:</strong> ${restaurant.phone}</p>
@@ -1282,7 +1313,7 @@ function showPaymentSuccessConfirmation(orderId, source) {
       <div class="confirmation-points">
         <h4><i class="fas fa-gift"></i> Loyalty Rewards</h4>
         <p>You earned ${loyaltyPoints} reward points!</p>
-        <p style="font-size: 14px; margin-top: 5px;">You can use them in your future orders</p>
+        <p style="font-size: 14px; margin-top: 5px;">You can use them in your next orders</p>
       </div>
     </div>
     <div style="text-align: center; color: #666666; font-size: 14px; padding: 20px;">
@@ -1352,7 +1383,7 @@ function initChat() {
   
   // Only show welcome messages if not returning from payment or digital menu
   addBotMessage("Welcome to Go Crispy! 🍗✨", "10:30");
-  addBotMessage("We offer you the most delicious crispy meals and fast food with high quality. How can I serve you today?", "10:30");
+  addBotMessage("We offer you the most delicious crispy meals and fast food with high quality. How can I help you today?", "10:30");
   
   // Add quick order button
   setTimeout(() => {
@@ -1458,12 +1489,12 @@ function sendMessage() {
 
 // Process user message
 function processUserMessage(text) {
-  if (currentStep === 'welcome' && (text.includes('order') || text.includes('want') || text.includes('need') || text.includes('place'))) {
+  if (currentStep === 'welcome' && (text.includes('order') || text.includes('أريد') || text.includes('ابغى') || text.includes('ابغي') || text.includes('I want') || text.includes('new order'))) {
     showCatalog();
-  } else if (currentStep === 'menu' && text.includes('show')) {
+  } else if (currentStep === 'menu' && text.includes('menu') || text.includes('view')) {
     showMenu();
-  } else if (text.includes('help') || text.includes('support')) {
-    addBotMessage("I can help you with: 📝 Show menu 🛒 Add products to order 🚚 Choose delivery method 💳 Electronic payment. What would you like to do?");
+  } else if (text.includes('help') || text.includes('مساعدة')) {
+    addBotMessage("I can help you with: 📝 View Menu 🛒 Add products to order 🚚 Choose delivery method 💳 Electronic payment. What would you like to do?");
   } else {
     addBotMessage("To start a new order, please type 'I want to order' or click the 'I want to order' button.");
   }
@@ -1482,7 +1513,7 @@ function showCatalog() {
         <h3>${restaurant.name}</h3>
         <p>${restaurant.description}<br>${restaurant.rating}</p>
         <button class="catalog-btn" onclick="showMenu()">
-          <i class="fas fa-utensils"></i> Show Menu
+          <i class="fas fa-utensils"></i> View Menu
         </button>
         <button class="catalog-btn" onclick="openDigitalMenu()" style="margin-top: 10px; background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
           <i class="fas fa-mobile-alt"></i> View Digital Menu
@@ -1590,7 +1621,7 @@ function updateCartDisplay() {
           <div class="cart-total-amount">${total} SAR</div>
         </div>
         <button class="checkout-btn" onclick="showDeliveryOptions()">
-          <i class="fas fa-lock"></i> Confirm Order & Pay
+          <i class="fas fa-lock"></i> Confirm Order & Payment
         </button>
       </div>
     `;
@@ -1620,7 +1651,7 @@ function showDeliveryOptions() {
         <div class="delivery-details">
           <h4>Delivery to Address</h4>
           <p>Our private driver will deliver your order with special preparations to maintain food quality</p>
-          <p style="color: #00a884; margin-top: 5px;">+ 16 SAR (Delivery service)</p>
+          <p style="color: #00a884; margin-top: 5px;">+ 16 SAR (Delivery Service)</p>
         </div>
       </div>
       <div class="delivery-option ${deliveryType === 'pickup' ? 'selected' : ''}" onclick="selectDelivery('pickup')">
@@ -1629,7 +1660,7 @@ function showDeliveryOptions() {
         </div>
         <div class="delivery-details">
           <h4>Pickup from Restaurant</h4>
-          <p>You can pick up your order from our branch in Al Olaya with premium reception service</p>
+          <p>You can pick up the order from our branch in Al Olaya district with premium reception service</p>
           <p style="color: #00a884; margin-top: 5px;">No additional fees</p>
         </div>
       </div>
@@ -1640,7 +1671,7 @@ function showDeliveryOptions() {
   scrollToBottom();
 }
 
-// Select delivery option
+// Select delivery option - UPDATED: No confirmation button needed
 function selectDelivery(type) {
   deliveryType = type;
   
@@ -1655,31 +1686,14 @@ function selectDelivery(type) {
     selectedOption.classList.add('selected');
   }
   
-  // Show confirmation button
+  // AUTO PROCEED based on selection (NO CONFIRMATION BUTTON NEEDED)
   setTimeout(() => {
-    const confirmationBtn = document.createElement('button');
-    confirmationBtn.className = 'checkout-btn';
-    confirmationBtn.innerHTML = '<i class="fas fa-check-circle"></i> Confirm Delivery Method';
-    confirmationBtn.onclick = confirmDeliverySelection;
-    
-    const chatContent = document.getElementById('chatContent');
-    chatContent.appendChild(confirmationBtn);
-    scrollToBottom();
+    if (deliveryType === 'delivery') {
+      showLocationSharing();
+    } else {
+      showPickupInfo();
+    }
   }, 300);
-}
-
-// Confirm delivery selection
-function confirmDeliverySelection() {
-  if (!deliveryType) {
-    addBotMessage("Please select a delivery method first");
-    return;
-  }
-  
-  if (deliveryType === 'delivery') {
-    showLocationSharing();
-  } else {
-    showPickupInfo();
-  }
 }
 
 // Show location sharing for delivery
@@ -1689,11 +1703,11 @@ function showLocationSharing() {
   const locationHTML = `
     <div class="location-card">
       <div class="location-header">
-        <h3><i class="fas fa-map-marker-alt"></i> Share Location</h3>
+        <h3><i class="fas fa-map-marker-alt"></i> Location Sharing</h3>
       </div>
       <div class="location-message">
         <p style="color: #303030; margin-bottom: 20px; font-size: 14px;">
-          To proceed with delivery order, we need to share your location
+          To continue with delivery order, we need to share your location
         </p>
         <button class="location-btn" onclick="shareLocation()">
           <i class="fas fa-location-arrow"></i> Share Current Location
@@ -1720,7 +1734,7 @@ function showLocationSharing() {
 // Share current location
 function shareLocation() {
   userAddress = "Current Location (Shared)";
-  addBotMessage("📍 Your location has been shared successfully!", getCurrentTime());
+  addBotMessage("📍 Location shared successfully!", getCurrentTime());
   setTimeout(() => {
     showPaymentOptions();
   }, 1000);
@@ -1734,7 +1748,7 @@ function handleManualAddress() {
 // Use saved address
 function useSavedAddress() {
   userAddress = "Saved Home Address";
-  addBotMessage(`✅ Saved address selected: ${userAddress}`, getCurrentTime());
+  addBotMessage(`✅ Selected saved address: ${userAddress}`, getCurrentTime());
   setTimeout(() => {
     showPaymentOptions();
   }, 1000);
@@ -1750,7 +1764,7 @@ function showPickupInfo() {
       <div class="location-message">
         <p style="color: #303030; margin-bottom: 20px; font-size: 14px; text-align: center;">
           📍 ${restaurant.address}<br>
-          ⏰ Estimated pickup time: 15-20 minutes<br>
+          ⏰ Expected pickup time: 15-20 minutes<br>
           📞 ${restaurant.phone}
         </p>
         <button class="checkout-btn" onclick="showPaymentOptions()">
@@ -1862,19 +1876,19 @@ function completePayment() {
           <i class="fas fa-check"></i>
         </div>
         <div>
-          <h3>Your order is confirmed! 🎉</h3>
+          <h3>Your order confirmed! 🎉</h3>
         </div>
       </div>
       <div class="confirmation-details">
         <p><strong>Order Number:</strong> #${orderId}</p>
         <p><strong>Payment Method:</strong> Apple Pay</p>
-        <p><strong>Delivery Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to address' : 'Pickup from restaurant'}</p>
+        <p><strong>Receiving Method:</strong> ${deliveryType === 'delivery' ? 'Delivery to address' : 'Pickup from restaurant'}</p>
         ${deliveryType === 'delivery' ? `<p><strong>Address:</strong> ${userAddress}</p>` : ''}
         <p><strong>Estimated Time:</strong> ${deliveryType === 'delivery' ? '45 minutes' : '25 minutes'}</p>
         <div style="margin: 15px 0; padding: 15px; background: rgba(0,0,0,0.02); border-radius: 10px;">
           <p style="color: #303030; margin-bottom: 10px; font-weight: 600;">Order Details:</p>
           ${itemsList}
-          ${deliveryType === 'delivery' ? `<p>• Delivery fee - 16 SAR</p>` : ''}
+          ${deliveryType === 'delivery' ? `<p>• Delivery Fee - 16 SAR</p>` : ''}
           <p style="margin-top: 10px; color: #00a884; font-weight: 700;">Total: ${total} SAR</p>
         </div>
         <p><strong>📞 For inquiries:</strong> ${restaurant.phone}</p>
@@ -1882,7 +1896,7 @@ function completePayment() {
       <div class="confirmation-points">
         <h4><i class="fas fa-gift"></i> Loyalty Rewards</h4>
         <p>You earned ${loyaltyPoints} reward points!</p>
-        <p style="font-size: 14px; margin-top: 5px;">You can use them in your future orders</p>
+        <p style="font-size: 14px; margin-top: 5px;">You can use them in your next orders</p>
       </div>
     </div>
     <div style="text-align: center; color: #666666; font-size: 14px; padding: 15px;">

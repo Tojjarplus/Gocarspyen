@@ -1074,20 +1074,20 @@ body::before {
 .card:nth-child(9) { animation-delay: 0.9s; }
 .card:nth-child(10) { animation-delay: 1s; }
 
-/* تحسينات للنص العربي */
+/* Arabic text improvements */
 body {
   line-height: 1.6;
   text-align: right;
   font-weight: 500;
 }
 
-/* تحسينات للتمرير السلس */
+/* Smooth scrolling improvements */
 .cart-items, .modifier-content, .modifier-options, .modal-content {
   scrollbar-width: thin;
   scrollbar-color: #9370db #f0ebff;
 }
 
-/* الألوان الرئيسية المستخدمة */
+/* Main colors used */
 :root {
   --primary-purple: #9370db;
   --primary-pink: #ff69b4;
@@ -1106,7 +1106,7 @@ body {
 
   <div class="header">
     <h1>🍗 Digital Menu</h1>
-    <p>Enjoy our special selection of delicious meals. Add to cart and order now</p>
+    <p>Enjoy our exclusive selection of delicious meals. Add to cart and order now</p>
   </div>
 
   <div class="menu-grid">
@@ -1229,7 +1229,7 @@ body {
           <div class="payment-icon">📱</div>
           <div class="payment-text">
             <div class="payment-name">STC Pay</div>
-            <div class="payment-desc">Payment via STC Pay app</div>
+            <div class="payment-desc">Pay via STC Pay app</div>
           </div>
         </div>
         
@@ -1253,7 +1253,7 @@ body {
           <div class="payment-icon">🍎</div>
           <div class="payment-text">
             <div class="payment-name">Apple Pay</div>
-            <div class="payment-desc">Payment via Apple Pay</div>
+            <div class="payment-desc">Pay via Apple Pay</div>
           </div>
         </div>
       </div>
@@ -1271,7 +1271,7 @@ body {
 <!-- Payment iframe container -->
 <div class="payment-iframe-container" id="paymentContainer">
   <div class="payment-header">
-    <h3 id="paymentTitle">Payment via STC Pay</h3>
+    <h3 id="paymentTitle">Pay via STC Pay</h3>
     <button class="close-payment-btn" onclick="closePayment()">×</button>
   </div>
   <iframe class="payment-iframe" id="paymentFrame" allow="payment"></iframe>
@@ -1317,8 +1317,8 @@ const menuItems = [
   },
   {
     id: 3,
-    name: "Binawi Meal",
-    description: "Delicious Binawi meal with variety of appetizers",
+    name: "Benowi Meal",
+    description: "Delicious Benowi meal with a variety of appetizers",
     price: 75,
     image: "images/item3.png",
     popular: false,
@@ -1335,7 +1335,7 @@ const menuItems = [
   {
     id: 4,
     name: "Celebration Meal",
-    description: "Large celebration meal for 2-3 people with special selection",
+    description: "Large celebration meal for 2-3 people with exclusive selection",
     price: 120,
     image: "images/item4.png",
     popular: true,
@@ -1352,7 +1352,7 @@ const menuItems = [
   {
     id: 5,
     name: "Go Double Royal Meal",
-    description: "Double and luxurious Go royal meal with special additions",
+    description: "Double and luxurious Go Royal meal with special additions",
     price: 110,
     image: "images/item5.png",
     popular: false,
@@ -1362,7 +1362,7 @@ const menuItems = [
       options: [
         { id: 1, name: "6 pieces fillet normal", desc: "6 PCS Fillet Normal" },
         { id: 2, name: "6 pieces fillet spicy", desc: "6 PCS Fillet Spicy" },
-        { id: 3, name: "8 pieces wings mixed", desc: "8 PCS Wings MIX" }
+        { id: 3, name: "8 pieces wings mix", desc: "8 PCS Wings MIX" }
       ]
     }
   },
@@ -1374,7 +1374,7 @@ const menuItems = [
     image: "images/item6.png",
     popular: false,
     modifiers: {
-      title: "Choose Packet *",
+      title: "Choose Pack *",
       subtitle: "Please choose 1",
       options: [
         { id: 1, name: "2 pieces normal chicken", desc: "2 PCS CH Normal" },
@@ -1391,7 +1391,7 @@ const menuItems = [
     image: "images/item7.png",
     popular: false,
     modifiers: {
-      title: "Choose Royal Package *",
+      title: "Choose Royal Bundle *",
       subtitle: "Please choose 1",
       options: [
         { id: 1, name: "8 pieces normal", desc: "8 PCS Normal" },
@@ -1411,16 +1411,16 @@ const menuItems = [
       title: "Choose Feast *",
       subtitle: "Please choose 1",
       options: [
-        { id: 1, name: "Whole chicken normal", desc: "Whole CH Normal" },
-        { id: 2, name: "Whole chicken spicy", desc: "Whole CH Spicy" },
-        { id: 3, name: "Mixed chicken and tender", desc: "Mix CH & TEND" }
+        { id: 1, name: "Whole normal chicken", desc: "Whole CH Normal" },
+        { id: 2, name: "Whole spicy chicken", desc: "Whole CH Spicy" },
+        { id: 3, name: "Mix chicken and tender", desc: "Mix CH & TEND" }
       ]
     }
   },
   {
     id: 9,
     name: "Happiness Meal",
-    description: "Happiness meal with special selection of delicious dishes",
+    description: "Happiness meal with exclusive selection of delicious dishes",
     price: 70,
     image: "images/item9.png",
     popular: false,
@@ -1430,19 +1430,19 @@ const menuItems = [
       options: [
         { id: 1, name: "4 pieces normal + fries", desc: "4 PCS Normal + Fries" },
         { id: 2, name: "4 pieces spicy + fries", desc: "4 PCS Spicy + Fries" },
-        { id: 3, name: "6 pieces mixed + drink", desc: "6 PCS Mix + Drink" }
+        { id: 3, name: "6 pieces mix + drink", desc: "6 PCS Mix + Drink" }
       ]
     }
   },
   {
     id: 10,
-    name: "Tender with Gravy Packet",
-    description: "Chicken tender packet with delicious gravy sauce",
+    name: "Tender Pack with Gravy",
+    description: "Chicken tender pack with delicious gravy sauce",
     price: 80,
     image: "images/item10.png",
     popular: false,
     modifiers: {
-      title: "Choose Packet *",
+      title: "Choose Pack *",
       subtitle: "Please choose 1",
       options: [
         { id: 1, name: "6 pieces normal tender", desc: "6 PCS TEND Normal" },
@@ -1800,7 +1800,7 @@ function getUserLocation() {
   locationStatus.style.color = '#9370db';
   
   if (!navigator.geolocation) {
-    locationStatus.textContent = 'Browser does not support location detection. We will contact you to confirm address.';
+    locationStatus.textContent = 'Browser does not support location. We will contact you to confirm address.';
     locationStatus.style.color = '#ff4757';
     return;
   }
@@ -1868,7 +1868,7 @@ function processPayment() {
   switch(selectedPayment) {
     case 'stcpay':
       paymentFile = 'stcpay.html';
-      paymentTitle = 'Payment via STC Pay';
+      paymentTitle = 'Pay via STC Pay';
       break;
     case 'mada':
     case 'visa':

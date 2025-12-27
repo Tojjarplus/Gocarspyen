@@ -1269,7 +1269,7 @@ body {
 </div>
 
 <!-- Payment iframe container -->
-<div class="payment-iframe-container" id="paymentContainer">
+<div class="payment-iframe-container" id="paymentContainer" style="display: none;">
   <div class="payment-header">
     <h3 id="paymentTitle">Pay via STC Pay</h3>
     <button class="close-payment-btn" onclick="closePayment()">×</button>
@@ -1537,6 +1537,7 @@ function openModifierModal(itemId) {
   document.getElementById('addOrderBtn').disabled = true;
   document.getElementById('modifierQty').textContent = '1';
   document.getElementById('modifierTotalPrice').textContent = `${item.price} SAR`;
+  document.getElementById('modifierOriginalPrice').textContent = '';
   
   // Show modal
   document.getElementById('modifierModal').style.display = 'flex';
@@ -1908,29 +1909,32 @@ function closePayment() {
   }
 }
 
-// ORIGINAL: NEW FUNCTION: Redirect to WhatsApp order flow (KEPT FOR COMPATIBILITY)
+// NEW: MODIFIED: Redirect to WhatsApp order flow - FIXED VERSION
 function redirectToWhatsAppOrder() {
   if (cart.length === 0) {
     alert('Cart is empty. Add items to cart first.');
     return;
   }
   
-  // Prepare cart data for transfer
+  // Prepare cart data for transfer - CORRECT STRUCTURE
   const cartData = {
     items: cart.map(item => ({
       itemId: item.itemId,
       name: item.name,
-      basePrice: item.basePrice,
       quantity: item.quantity,
-      addons: item.addons,
-      modifier: item.modifier
+      basePrice: item.basePrice,
+      addons: item.addons || [],
+      modifier: item.modifier || null
     })),
     total: cart.reduce((sum, item) => {
-      const itemTotal = item.basePrice + (item.addons ? item.addons.reduce((addonSum, addon) => addonSum + (addon.price * addon.quantity), 0) : 0);
-      return sum + (itemTotal * item.quantity);
+      const itemTotal = item.basePrice * item.quantity;
+      const addonsTotal = item.addons ? item.addons.reduce((addonSum, addon) => addonSum + (addon.price * addon.quantity), 0) : 0;
+      return sum + itemTotal + addonsTotal;
     }, 0),
     source: 'digitalmenu'
   };
+  
+  console.log('Cart data to send:', cartData);
   
   // Encode cart data as URL parameter
   const encodedCartData = encodeURIComponent(JSON.stringify(cartData));
@@ -1939,7 +1943,7 @@ function redirectToWhatsAppOrder() {
   window.location.href = `index.html?cartData=${encodedCartData}`;
 }
 
-// ORIGINAL: MODIFIED: Open checkout - now redirects to WhatsApp order flow (KEPT FOR COMPATIBILITY)
+// MODIFIED: Open checkout - now redirects to WhatsApp order flow
 function openCheckout() {
   // Redirect to WhatsApp order flow instead of showing modal
   redirectToWhatsAppOrder();

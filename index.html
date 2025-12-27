@@ -1133,6 +1133,8 @@ function checkForDigitalMenuOrder() {
   if (cartDataParam) {
     try {
       const cartData = JSON.parse(decodeURIComponent(cartDataParam));
+      console.log('Cart data received from digital menu:', cartData);
+      
       if (cartData && cartData.items && cartData.items.length > 0) {
         // Process the digital menu order
         processDigitalMenuOrder(cartData);
@@ -1155,6 +1157,8 @@ function processDigitalMenuOrder(cartData) {
   cart = [];
   selectedItems = {};
   
+  console.log('Processing digital menu order with data:', cartData);
+  
   // Add items from digital menu to cart
   let itemsTotal = 0;
   let itemsHTML = '';
@@ -1164,9 +1168,14 @@ function processDigitalMenuOrder(cartData) {
     // Find the corresponding menu item
     const menuItem = menuItems.find(item => item.id === itemData.itemId);
     if (menuItem) {
-      // Add to selected items
-      selectedItems[menuItem.id] = true;
-      cart.push(menuItem.id);
+      console.log('Processing item:', menuItem.name, 'Quantity:', itemData.quantity);
+      
+      // Add to selected items (one entry per quantity)
+      for (let i = 0; i < itemData.quantity; i++) {
+        const uniqueKey = `${menuItem.id}-${Date.now()}-${i}`;
+        selectedItems[uniqueKey] = true;
+        cart.push(menuItem.id);
+      }
       
       const itemTotal = menuItem.price * itemData.quantity;
       itemsTotal += itemTotal;
@@ -1180,7 +1189,17 @@ function processDigitalMenuOrder(cartData) {
         </div>
       `;
       
-      // Add addons if any
+      // Add modifier if any (from new digital menu)
+      if (itemData.modifier && itemData.modifier.name) {
+        itemsHTML += `
+          <div class="cart-item">
+            <div class="cart-item-name" style="font-size: 12px; padding-left: 15px; color: #666;">↳ ${itemData.modifier.name}</div>
+            <div class="cart-item-price" style="font-size: 12px; color: #666;">Included</div>
+          </div>
+        `;
+      }
+      
+      // Add addons if any (for backward compatibility)
       if (itemData.addons && itemData.addons.length > 0) {
         itemData.addons.forEach(addon => {
           const addonTotal = addon.price * addon.quantity;
@@ -1192,16 +1211,6 @@ function processDigitalMenuOrder(cartData) {
             </div>
           `;
         });
-      }
-      
-      // Add modifier if any (from new digital menu)
-      if (itemData.modifier) {
-        itemsHTML += `
-          <div class="cart-item">
-            <div class="cart-item-name" style="font-size: 12px; padding-left: 15px; color: #666;">↳ ${itemData.modifier.name}</div>
-            <div class="cart-item-price" style="font-size: 12px; color: #666;">Included</div>
-          </div>
-        `;
       }
     }
   });
@@ -1217,6 +1226,9 @@ function processDigitalMenuOrder(cartData) {
         <div class="cart-total-label">Total</div>
         <div class="cart-total-amount">${itemsTotal} SAR</div>
       </div>
+      <button class="checkout-btn" onclick="showDeliveryOptions()">
+        <i class="fas fa-lock"></i> Continue to Delivery
+      </button>
     </div>
   `;
   
@@ -1231,11 +1243,6 @@ function processDigitalMenuOrder(cartData) {
   
   // Auto-scroll to bottom
   scrollToBottom();
-  
-  // AUTO SHOW DELIVERY OPTIONS after 1 second (NO CONFIRMATION BUTTON NEEDED)
-  setTimeout(() => {
-    showDeliveryOptions();
-  }, 1000);
   
   // Return true to indicate order was processed
   return true;
@@ -1266,7 +1273,9 @@ function showPaymentSuccessConfirmation(orderId, source) {
   let itemsList = '';
   
   Object.keys(selectedItems).forEach(itemId => {
-    const item = menuItems.find(i => i.id == itemId);
+    // Extract original item ID from the unique key
+    const originalItemId = parseInt(itemId.split('-')[0]);
+    const item = menuItems.find(i => i.id == originalItemId);
     if (item) {
       itemsTotal += item.price;
       itemsList += `<p>• ${item.name} - ${item.price} SAR</p>`;
@@ -1341,7 +1350,9 @@ function goToCheckout() {
   // Calculate order total
   let itemsTotal = 0;
   Object.keys(selectedItems).forEach(itemId => {
-    const item = menuItems.find(i => i.id == itemId);
+    // Extract original item ID from the unique key
+    const originalItemId = parseInt(itemId.split('-')[0]);
+    const item = menuItems.find(i => i.id == originalItemId);
     if (item) itemsTotal += item.price;
   });
   
@@ -1350,14 +1361,16 @@ function goToCheckout() {
   const orderId = Math.floor(1000 + Math.random() * 9000);
   
   // Redirect to checkout with order details
-  window.location.href = `./checkout.html?orderId=${orderId}&total=${total}&items=${Object.keys(selectedItems).length}&delivery=${deliveryType}`;
+  window.location.href = `./checkout.html?orderId=${orderId}&total=${total}&items=${cart.length}&delivery=${deliveryType}`;
 }
 
 function goToStcPay() {
   // Calculate order total
   let itemsTotal = 0;
   Object.keys(selectedItems).forEach(itemId => {
-    const item = menuItems.find(i => i.id == itemId);
+    // Extract original item ID from the unique key
+    const originalItemId = parseInt(itemId.split('-')[0]);
+    const item = menuItems.find(i => i.id == originalItemId);
     if (item) itemsTotal += item.price;
   });
   
@@ -1366,7 +1379,7 @@ function goToStcPay() {
   const orderId = Math.floor(1000 + Math.random() * 9000);
   
   // Redirect to STC Pay with order details
-  window.location.href = `./stcpay.html?orderId=${orderId}&total=${total}&items=${Object.keys(selectedItems).length}&delivery=${deliveryType}`;
+  window.location.href = `./stcpay.html?orderId=${orderId}&total=${total}&items=${cart.length}&delivery=${deliveryType}`;
 }
 
 // Initialize chat
@@ -1538,7 +1551,11 @@ function showMenu() {
   let menuHTML = '<div class="menu-card">';
   
   menuItems.forEach(item => {
-    const isSelected = selectedItems[item.id] || false;
+    const isSelected = Object.keys(selectedItems).some(key => {
+      const itemId = parseInt(key.split('-')[0]);
+      return itemId === item.id;
+    });
+    
     menuHTML += `
       <div class="menu-item">
         <div class="menu-item-add ${isSelected ? 'selected' : ''}" onclick="toggleItem(${item.id})">
@@ -1566,19 +1583,35 @@ function showMenu() {
 
 // Toggle item selection
 function toggleItem(itemId) {
-  if (selectedItems[itemId]) {
-    delete selectedItems[itemId];
+  // Check if item is already selected
+  const isSelected = Object.keys(selectedItems).some(key => {
+    const selectedItemId = parseInt(key.split('-')[0]);
+    return selectedItemId === itemId;
+  });
+  
+  if (isSelected) {
+    // Remove all instances of this item
+    Object.keys(selectedItems).forEach(key => {
+      const selectedItemId = parseInt(key.split('-')[0]);
+      if (selectedItemId === itemId) {
+        delete selectedItems[key];
+      }
+    });
     cart = cart.filter(id => id !== itemId);
   } else {
-    selectedItems[itemId] = true;
+    // Add item with unique key
+    const uniqueKey = `${itemId}-${Date.now()}`;
+    selectedItems[uniqueKey] = true;
     cart.push(itemId);
   }
   
   // Update the UI
-  const addButton = document.querySelector(`.menu-item-add[onclick="toggleItem(${itemId})"]`);
-  if (addButton) {
-    addButton.classList.toggle('selected');
-    addButton.innerHTML = selectedItems[itemId] ? '×' : '+';
+  const addButtons = document.querySelectorAll(`.menu-item-add[onclick="toggleItem(${itemId})"]`);
+  if (addButtons.length > 0) {
+    const addButton = addButtons[0];
+    const newIsSelected = !isSelected;
+    addButton.classList.toggle('selected', newIsSelected);
+    addButton.innerHTML = newIsSelected ? '×' : '+';
   }
   
   updateCartDisplay();
@@ -1593,18 +1626,28 @@ function updateCartDisplay() {
   const itemCount = Object.keys(selectedItems).length;
   
   if (itemCount > 0) {
-    // Calculate total
+    // Calculate total and group items
     let total = 0;
     let itemsHTML = '';
     
-    Object.keys(selectedItems).forEach(itemId => {
+    // Group items by ID and count quantities
+    const itemCounts = {};
+    Object.keys(selectedItems).forEach(key => {
+      const itemId = parseInt(key.split('-')[0]);
+      itemCounts[itemId] = (itemCounts[itemId] || 0) + 1;
+    });
+    
+    // Create HTML for each item group
+    Object.keys(itemCounts).forEach(itemId => {
       const item = menuItems.find(i => i.id == itemId);
       if (item) {
-        total += item.price;
+        const quantity = itemCounts[itemId];
+        const itemTotal = item.price * quantity;
+        total += itemTotal;
         itemsHTML += `
           <div class="cart-item">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-price">${item.price} SAR</div>
+            <div class="cart-item-name">${item.name} × ${quantity}</div>
+            <div class="cart-item-price">${itemTotal} SAR</div>
           </div>
         `;
       }
@@ -1785,7 +1828,9 @@ function showPaymentOptions() {
   // Calculate totals
   let itemsTotal = 0;
   Object.keys(selectedItems).forEach(itemId => {
-    const item = menuItems.find(i => i.id == itemId);
+    // Extract original item ID from the unique key
+    const originalItemId = parseInt(itemId.split('-')[0]);
+    const item = menuItems.find(i => i.id == originalItemId);
     if (item) itemsTotal += item.price;
   });
   
@@ -1857,7 +1902,9 @@ function completePayment() {
   let itemsList = '';
   
   Object.keys(selectedItems).forEach(itemId => {
-    const item = menuItems.find(i => i.id == itemId);
+    // Extract original item ID from the unique key
+    const originalItemId = parseInt(itemId.split('-')[0]);
+    const item = menuItems.find(i => i.id == originalItemId);
     if (item) {
       itemsTotal += item.price;
       itemsList += `<p>• ${item.name} - ${item.price} SAR</p>`;
